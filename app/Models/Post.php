@@ -203,7 +203,7 @@ class Post extends Model
 
     public function getDate()
     {
-        return Carbon::createFromFormat('d/m/Y', $this->date)->format('F d, Y');
+        return Carbon::createFromFormat('d/m/y', $this->date)->format('F d, Y');
     }
 
     public function getCategoryTitle()
@@ -220,4 +220,50 @@ class Post extends Model
                 : 'Нет тегов';
     }
 
+    public function hasPrevious()
+    {
+        return self::where('id', '<' , $this->id)->max('id');
+    }
+
+    public function getPrevious()
+    {
+        $postID = $this->hasPrevious();
+        return self::findOrFail($postID);
+    }
+
+    public function hasNext()
+    {
+        return self::where('id', '>' , $this->id)->min('id');
+    }
+
+    public function getNext()
+    {
+        $postID = $this->hasNext();
+        return self::findOrFail($postID);
+    }
+
+    public function related()
+    {
+        return self::all()->except($this->id);
+    }
+
+    public function hasCategory()
+    {
+        return $this->category != null ? true : false;
+    }
+
+    public static function getPopularPosts()
+    {
+        return self::orderBy('views', 'desc')->take(3)->get();
+    }
+
+    public static function getFeaturedPosts()
+    {
+        return self::where('is_featured', '=', 1)->take(3)->get();
+    }
+
+    public static function getRecentPosts()
+    {
+        return self::orderBy('date', 'desc')->take(4)->get();
+    }
 }
