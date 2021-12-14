@@ -8,6 +8,10 @@ use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\Admin\AdminCommentsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,12 +32,15 @@ Route::get('/category/{slug}', [HomeController::class, 'category'])->name('categ
 Route::group(['middleware' => 'guest'], function (){
     Route::get('/register', [AuthController::class, 'showRegisterForm']);
     Route::post('/register', [AuthController::class, 'registration']);
-    Route::get('/login', [AuthController::class, 'showLoginForm']);
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
 });
 
 Route::group(['middleware' => 'auth'], function (){
     Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::post('/profile', [ProfileController::class, 'updateUser']);
+    Route::post('/comment', [CommentsController::class, 'store']);
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function (){
@@ -42,6 +49,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function (){
     Route::resource('/tags', TagsController::class);
     Route::resource('/users', UsersController::class);
     Route::resource('/posts', PostsController::class);
+    Route::get('/comments', [AdminCommentsController::class, 'index']);
+    Route::get('/comments/toggle/{id}', [AdminCommentsController::class, 'toggle']);
+    Route::delete('/comments/{id}/destroy', [AdminCommentsController::class, 'destroy'])->name('comments.destroy');
 });
 
 
