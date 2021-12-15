@@ -52,6 +52,9 @@
                 <ul class="nav navbar-nav text-uppercase pull-right">
                     @if(Auth::check())
                         <li><a href="/profile">My profile</a></li>
+                        @if(Auth::user()->is_admin == 1)
+                            <li><a href="/admin">Admin panel</a></li>
+                        @endif
                         <li><a href="/logout">Logout</a></li>
                     @else
                         <li><a href="/register">Register</a></li>
@@ -74,8 +77,11 @@
     </div>
     <!-- /.container-fluid -->
 </nav>
-
-
+@if(session('Status'))
+    <div class="alert alert-success">
+        {{session('Status')}}
+    </div>
+@endif
 @yield('content')
 <!--footer start-->
 <div id="footer">
