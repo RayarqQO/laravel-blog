@@ -13,7 +13,6 @@ class HomeController extends Controller
     {
         $posts = Post::paginate(3);
 
-
         return view('pages.index', [
             'posts' => $posts,
         ]);
